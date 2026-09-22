@@ -1,0 +1,52 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sleep infinity
+    init: true
+    volumes:
+      - ..:/workspaces/ocr-text-corrector
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      UV_CACHE_DIR: /workspaces/ocr-text-corrector/.cache/uv
+      HF_HOME: /workspaces/ocr-text-corrector/.cache/huggingface
+      HF_HUB_DISABLE_XET: "1"
+      TMPDIR: /workspaces/ocr-text-corrector/.cache/tmp
+    depends_on:
+      mlflow:
+        condition: service_healthy
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: mlflow.Dockerfile
+    command:
+      - mlflow
+      - server
+      - --host
+      - 0.0.0.0
+      - --port
+      - "5000"
+      - --workers
+      - "1"
+      - --backend-store-uri
+      - sqlite:////mlflow/state/tracking.db
+      - --serve-artifacts
+      - --artifacts-destination
+      - /mlflow/state/artifacts
+      - --default-artifact-root
+      - mlflow-artifacts:/
+      - --allowed-hosts
+      - mlflow:5000,localhost:*,127.0.0.1:*
+    volumes:
+      - mlflow-state:/mlflow/state
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+volumes:
+  mlflow-state:

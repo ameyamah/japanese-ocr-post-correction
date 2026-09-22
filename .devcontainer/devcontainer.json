@@ -1,0 +1,25 @@
+{
+  "name": "OCR Text Corrector (CPU)",
+  "dockerComposeFile": "compose.yaml",
+  "service": "dev",
+  "runServices": ["dev", "mlflow"],
+  "workspaceFolder": "/workspaces/ocr-text-corrector",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "vscode",
+  "overrideCommand": false,
+  "forwardPorts": [8000, "mlflow:5000"],
+  "portsAttributes": {
+    "8000": {"label": "Local learning API", "onAutoForward": "notify"},
+    "5000": {"label": "Private MLflow UI", "onAutoForward": "notify"}
+  },
+  "postCreateCommand": "bash .devcontainer/bootstrap.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-python.vscode-pylance", "charliermarsh.ruff"],
+      "settings": {
+        "python.defaultInterpreterPath": "/workspaces/ocr-text-corrector/.venv/bin/python",
+        "python.terminal.activateEnvironment": true
+      }
+    }
+  }
+}
