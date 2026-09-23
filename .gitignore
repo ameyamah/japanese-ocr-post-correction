@@ -46,4 +46,3 @@ pytorch_model*.bin
 optimizer*.bin
 .streamlit/secrets.toml
 .DS_Store
-_old

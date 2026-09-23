@@ -6,11 +6,23 @@ requires-python = ">=3.11,<3.13"
 dependencies = [
     "fastapi>=0.115,<1",
     "httpx>=0.28,<1",
+    "jupyter",
+    "jupyterlab",
+    "notebook",
     "pydantic>=2.11,<3",
+    "sentencepiece",
+    "torch>=2.8.0",
+    "transformers>=4.57.6",
     "uvicorn>=0.34,<1",
 ]
 
 [project.optional-dependencies]
+
+# Keep your other extras here.
+cpu = ["torch==2.8.0"]
+cuda = ["torch==2.8.0"]
+
+
 inference = [
     "sentencepiece>=0.2,<0.3",
     "torch==2.8.0",
@@ -29,13 +41,26 @@ dev = [
     "ruff>=0.11,<1",
 ]
 
+[tool.uv]
+conflicts = [
+  [{ extra = "cpu" }, { extra = "cuda" }],
+]
+
 [[tool.uv.index]]
 name = "pytorch-cpu"
 url = "https://download.pytorch.org/whl/cpu"
 explicit = true
 
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
 [tool.uv.sources]
-torch = { index = "pytorch-cpu" }
+torch = [
+  { index = "pytorch-cpu", extra = "cpu" },
+  { index = "pytorch-cu128", extra = "cuda" },
+]
 
 [build-system]
 requires = ["hatchling"]
