@@ -7,6 +7,16 @@ services:
     init: true
     volumes:
       - ..:/workspaces/japanese-ocr-post-correction
+
+    # uncomment the lines below if GPU is available
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1          # Use 'all' or a specific number
+    #           capabilities: [gpu]
+    
     environment:
       MLFLOW_TRACKING_URI: http://mlflow:5000
       UV_CACHE_DIR: /workspaces/japanese-ocr-post-correction/.cache/uv
