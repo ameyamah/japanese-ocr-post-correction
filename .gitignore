@@ -6,7 +6,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
-data/
+# data/
 artifacts/
 runs/
 reports/generated/
