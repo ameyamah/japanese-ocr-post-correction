@@ -1,5 +1,5 @@
 [project]
-name = "japanese_ocr_post_correction"
+name = "japanese-ocr-post-correction"
 version = "0.1.0"
 description = "Japanese OCR post-correction with T5 and the JaPOC dataset"
 readme = "README.md"
