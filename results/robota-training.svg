@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="410" viewBox="0 0 1120 410" role="img" aria-labelledby="title desc">
+<title id="title">JaPOC Robota: training and validation over ten epochs</title>
+<desc id="desc">Training loss falls from 2.3563 to 0.0121. Validation exact match reaches the unchanged OCR baseline of 98.39 percent at epoch two but never exceeds it. Epoch two is selected because ties keep the earlier checkpoint. These are validation results, not test results.</desc>
+<rect width="1120" height="410" fill="#ffffff"/>
+<g font-family="Arial, sans-serif" fill="#172033">
+<text x="30" y="30" font-size="21" font-weight="bold">Japanese OCR Post-Correction · Robota</text>
+<text x="30" y="55" font-size="13" fill="#526174">10 epochs · 498 validation samples · selected checkpoint: epoch 2 (earliest best)</text>
+<text x="70" y="85" font-size="16" font-weight="bold">Training loss ↓</text>
+<line x1="70" y1="305" x2="346" y2="305" stroke="#e2e8f0"/><text x="61" y="309" text-anchor="end" font-size="12" fill="#526174">0</text>
+<line x1="70" y1="236.66666666666669" x2="346" y2="236.66666666666669" stroke="#e2e8f0"/><text x="61" y="240.66666666666669" text-anchor="end" font-size="12" fill="#526174">1</text>
+<line x1="70" y1="168.33333333333334" x2="346" y2="168.33333333333334" stroke="#e2e8f0"/><text x="61" y="172.33333333333334" text-anchor="end" font-size="12" fill="#526174">2</text>
+<line x1="70" y1="100" x2="346" y2="100" stroke="#e2e8f0"/><text x="61" y="104" text-anchor="end" font-size="12" fill="#526174">3</text>
+<text x="70" y="325" text-anchor="middle" font-size="12" fill="#526174">1</text>
+<text x="100.66666666666667" y="325" text-anchor="middle" font-size="12" fill="#526174">2</text>
+<text x="162" y="325" text-anchor="middle" font-size="12" fill="#526174">4</text>
+<text x="223.33333333333334" y="325" text-anchor="middle" font-size="12" fill="#526174">6</text>
+<text x="284.66666666666663" y="325" text-anchor="middle" font-size="12" fill="#526174">8</text>
+<text x="346" y="325" text-anchor="middle" font-size="12" fill="#526174">10</text>
+<text x="208" y="348" text-anchor="middle" font-size="12" fill="#526174">Epoch</text>
+<line x1="100.66666666666667" y1="100" x2="100.66666666666667" y2="305" stroke="#94a3b8" stroke-dasharray="3 4"/>
+<polyline points="70,143.9886184927058 100.66666666666667,296.0763085162423 131.33333333333334,301.4480186933786 162,302.7226109541447 192.66666666666669,303.1200738374144 223.33333333333334,303.5166152960216 254,302.47691933367605 284.66666666666663,303.85628898334085 315.33333333333337,304.1370856981542 346,304.17330701595677" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linejoin="round"/>
+<circle cx="70" cy="143.9886184927058" r="3" fill="#2563eb"><title>Epoch 1: 2.3563</title></circle>
+<circle cx="100.66666666666667" cy="296.0763085162423" r="5" fill="#172033"><title>Epoch 2: 0.1306</title></circle>
+<circle cx="131.33333333333334" cy="301.4480186933786" r="3" fill="#2563eb"><title>Epoch 3: 0.0520</title></circle>
+<circle cx="162" cy="302.7226109541447" r="3" fill="#2563eb"><title>Epoch 4: 0.0333</title></circle>
+<circle cx="192.66666666666669" cy="303.1200738374144" r="3" fill="#2563eb"><title>Epoch 5: 0.0275</title></circle>
+<circle cx="223.33333333333334" cy="303.5166152960216" r="3" fill="#2563eb"><title>Epoch 6: 0.0217</title></circle>
+<circle cx="254" cy="302.47691933367605" r="3" fill="#2563eb"><title>Epoch 7: 0.0369</title></circle>
+<circle cx="284.66666666666663" cy="303.85628898334085" r="3" fill="#2563eb"><title>Epoch 8: 0.0167</title></circle>
+<circle cx="315.33333333333337" cy="304.1370856981542" r="3" fill="#2563eb"><title>Epoch 9: 0.0126</title></circle>
+<circle cx="346" cy="304.17330701595677" r="3" fill="#2563eb"><title>Epoch 10: 0.0121</title></circle>
+<text x="437" y="85" font-size="16" font-weight="bold">Validation exact match ↑</text>
+<line x1="437" y1="305" x2="713" y2="305" stroke="#e2e8f0"/><text x="428" y="309" text-anchor="end" font-size="12" fill="#526174">95%</text>
+<line x1="437" y1="264" x2="713" y2="264" stroke="#e2e8f0"/><text x="428" y="268" text-anchor="end" font-size="12" fill="#526174">96%</text>
+<line x1="437" y1="223" x2="713" y2="223" stroke="#e2e8f0"/><text x="428" y="227" text-anchor="end" font-size="12" fill="#526174">97%</text>
+<line x1="437" y1="182" x2="713" y2="182" stroke="#e2e8f0"/><text x="428" y="186" text-anchor="end" font-size="12" fill="#526174">98%</text>
+<line x1="437" y1="141" x2="713" y2="141" stroke="#e2e8f0"/><text x="428" y="145" text-anchor="end" font-size="12" fill="#526174">99%</text>
+<line x1="437" y1="100" x2="713" y2="100" stroke="#e2e8f0"/><text x="428" y="104" text-anchor="end" font-size="12" fill="#526174">100%</text>
+<text x="437" y="325" text-anchor="middle" font-size="12" fill="#526174">1</text>
+<text x="467.6666666666667" y="325" text-anchor="middle" font-size="12" fill="#526174">2</text>
+<text x="529" y="325" text-anchor="middle" font-size="12" fill="#526174">4</text>
+<text x="590.3333333333334" y="325" text-anchor="middle" font-size="12" fill="#526174">6</text>
+<text x="651.6666666666666" y="325" text-anchor="middle" font-size="12" fill="#526174">8</text>
+<text x="713" y="325" text-anchor="middle" font-size="12" fill="#526174">10</text>
+<text x="575" y="348" text-anchor="middle" font-size="12" fill="#526174">Epoch</text>
+<line x1="467.6666666666667" y1="100" x2="467.6666666666667" y2="305" stroke="#94a3b8" stroke-dasharray="3 4"/>
+<polyline points="437,264.6586345381529 467.6666666666667,165.8634538152607 498.3333333333333,165.8634538152607 529,165.8634538152607 559.6666666666666,165.8634538152607 590.3333333333334,165.8634538152607 621,165.8634538152607 651.6666666666666,174.09638554216858 682.3333333333334,165.8634538152607 713,165.8634538152607" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linejoin="round"/>
+<line x1="437" y1="165.8634538152607" x2="713" y2="165.8634538152607" stroke="#c56a13" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="437" cy="264.6586345381529" r="3" fill="#2563eb"><title>Epoch 1: 95.98%</title></circle>
+<circle cx="467.6666666666667" cy="165.8634538152607" r="5" fill="#172033"><title>Epoch 2: 98.39%</title></circle>
+<circle cx="498.3333333333333" cy="165.8634538152607" r="3" fill="#2563eb"><title>Epoch 3: 98.39%</title></circle>
+<circle cx="529" cy="165.8634538152607" r="3" fill="#2563eb"><title>Epoch 4: 98.39%</title></circle>
+<circle cx="559.6666666666666" cy="165.8634538152607" r="3" fill="#2563eb"><title>Epoch 5: 98.39%</title></circle>
+<circle cx="590.3333333333334" cy="165.8634538152607" r="3" fill="#2563eb"><title>Epoch 6: 98.39%</title></circle>
+<circle cx="621" cy="165.8634538152607" r="3" fill="#2563eb"><title>Epoch 7: 98.39%</title></circle>
+<circle cx="651.6666666666666" cy="174.09638554216858" r="3" fill="#2563eb"><title>Epoch 8: 98.19%</title></circle>
+<circle cx="682.3333333333334" cy="165.8634538152607" r="3" fill="#2563eb"><title>Epoch 9: 98.39%</title></circle>
+<circle cx="713" cy="165.8634538152607" r="3" fill="#2563eb"><title>Epoch 10: 98.39%</title></circle>
+<text x="804" y="85" font-size="16" font-weight="bold">Validation CER ↓</text>
+<line x1="804" y1="305" x2="1080" y2="305" stroke="#e2e8f0"/><text x="795" y="309" text-anchor="end" font-size="12" fill="#526174">0%</text>
+<line x1="804" y1="236.66666666666669" x2="1080" y2="236.66666666666669" stroke="#e2e8f0"/><text x="795" y="240.66666666666669" text-anchor="end" font-size="12" fill="#526174">1%</text>
+<line x1="804" y1="168.33333333333334" x2="1080" y2="168.33333333333334" stroke="#e2e8f0"/><text x="795" y="172.33333333333334" text-anchor="end" font-size="12" fill="#526174">2%</text>
+<line x1="804" y1="100" x2="1080" y2="100" stroke="#e2e8f0"/><text x="795" y="104" text-anchor="end" font-size="12" fill="#526174">3%</text>
+<text x="804" y="325" text-anchor="middle" font-size="12" fill="#526174">1</text>
+<text x="834.6666666666666" y="325" text-anchor="middle" font-size="12" fill="#526174">2</text>
+<text x="896" y="325" text-anchor="middle" font-size="12" fill="#526174">4</text>
+<text x="957.3333333333334" y="325" text-anchor="middle" font-size="12" fill="#526174">6</text>
+<text x="1018.6666666666666" y="325" text-anchor="middle" font-size="12" fill="#526174">8</text>
+<text x="1080" y="325" text-anchor="middle" font-size="12" fill="#526174">10</text>
+<text x="942" y="348" text-anchor="middle" font-size="12" fill="#526174">Epoch</text>
+<line x1="834.6666666666666" y1="100" x2="834.6666666666666" y2="305" stroke="#94a3b8" stroke-dasharray="3 4"/>
+<polyline points="804,151.36556572489718 834.6666666666666,287.3252420745457 865.3333333333334,287.3252420745457 896,287.3252420745457 926.6666666666666,287.3252420745457 957.3333333333334,287.3252420745457 988,287.3252420745457 1018.6666666666666,285.96564531104923 1049.3333333333333,287.3252420745457 1080,287.3252420745457" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linejoin="round"/>
+<line x1="804" y1="287.3252420745457" x2="1080" y2="287.3252420745457" stroke="#c56a13" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="804" cy="151.36556572489718" r="3" fill="#2563eb"><title>Epoch 1: 2.25%</title></circle>
+<circle cx="834.6666666666666" cy="287.3252420745457" r="5" fill="#172033"><title>Epoch 2: 0.26%</title></circle>
+<circle cx="865.3333333333334" cy="287.3252420745457" r="3" fill="#2563eb"><title>Epoch 3: 0.26%</title></circle>
+<circle cx="896" cy="287.3252420745457" r="3" fill="#2563eb"><title>Epoch 4: 0.26%</title></circle>
+<circle cx="926.6666666666666" cy="287.3252420745457" r="3" fill="#2563eb"><title>Epoch 5: 0.26%</title></circle>
+<circle cx="957.3333333333334" cy="287.3252420745457" r="3" fill="#2563eb"><title>Epoch 6: 0.26%</title></circle>
+<circle cx="988" cy="287.3252420745457" r="3" fill="#2563eb"><title>Epoch 7: 0.26%</title></circle>
+<circle cx="1018.6666666666666" cy="285.96564531104923" r="3" fill="#2563eb"><title>Epoch 8: 0.28%</title></circle>
+<circle cx="1049.3333333333333" cy="287.3252420745457" r="3" fill="#2563eb"><title>Epoch 9: 0.26%</title></circle>
+<circle cx="1080" cy="287.3252420745457" r="3" fill="#2563eb"><title>Epoch 10: 0.26%</title></circle>
+<line x1="70" y1="380" x2="96" y2="380" stroke="#2563eb" stroke-width="2.5"/><text x="104" y="384" font-size="12">T5 during fine-tuning</text>
+<line x1="280" y1="380" x2="306" y2="380" stroke="#c56a13" stroke-width="2" stroke-dasharray="6 4"/><text x="314" y="384" font-size="12">OCR text (no correction)</text>
+<circle cx="551" cy="380" r="5" fill="#172033"/><text x="563" y="384" font-size="12">Selected epoch</text>
+<text x="1090" y="384" text-anchor="end" font-size="11" fill="#526174">Source: robota-gpu-10/report.json</text>
+</g>
+</svg>

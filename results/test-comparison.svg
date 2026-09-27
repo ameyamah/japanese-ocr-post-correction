@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="560" viewBox="0 0 1120 560" role="img" aria-labelledby="title desc">
+<title id="title">JaPOC test results: OCR text without correction versus fine-tuned T5</title>
+<desc id="desc">996 test samples each for Vision and Robota. Vision exact match improves from 71.99% to 87.15% and CER falls from 8.19% to 4.57%. Robota is unchanged at 98.69% exact match and 0.21% CER. Brown bars use the OCR input directly, without a T5 model. Blue bars use fine-tuned T5. Models were selected using validation, not test scores.</desc>
+<rect width="1120" height="560" rx="14" fill="#ffffff"/>
+<g font-family="Arial, sans-serif" fill="#172033">
+<text x="36" y="42" font-size="25" font-weight="700">Japanese OCR correction · Test results</text>
+<text x="36" y="69" font-size="15" fill="#526174">996 test samples each for Vision and Robota · One T5 model trained for each OCR source</text>
+<rect x="36" y="91" width="16" height="16" rx="3" fill="#c56a13"/>
+<text x="61" y="104" font-size="14">OCR text (no correction)</text>
+<rect x="290" y="91" width="16" height="16" rx="3" fill="#2563eb"/>
+<text x="315" y="104" font-size="14">Fine-tuned T5</text>
+<text x="54" y="149" font-size="18" font-weight="700">Exact match (%) · Higher is better</text>
+<line x1="80" y1="405" x2="485" y2="405" stroke="#e2e8f0"/>
+<text x="68" y="410" text-anchor="end" font-size="13" fill="#526174">0</text>
+<line x1="80" y1="361" x2="485" y2="361" stroke="#e2e8f0"/>
+<text x="68" y="366" text-anchor="end" font-size="13" fill="#526174">20</text>
+<line x1="80" y1="317" x2="485" y2="317" stroke="#e2e8f0"/>
+<text x="68" y="322" text-anchor="end" font-size="13" fill="#526174">40</text>
+<line x1="80" y1="273" x2="485" y2="273" stroke="#e2e8f0"/>
+<text x="68" y="278" text-anchor="end" font-size="13" fill="#526174">60</text>
+<line x1="80" y1="229" x2="485" y2="229" stroke="#e2e8f0"/>
+<text x="68" y="234" text-anchor="end" font-size="13" fill="#526174">80</text>
+<line x1="80" y1="185" x2="485" y2="185" stroke="#e2e8f0"/>
+<text x="68" y="190" text-anchor="end" font-size="13" fill="#526174">100</text>
+<rect x="117" y="246.6265" width="58" height="158.3735" fill="#c56a13" data-dataset="vision" data-method="baseline" data-metric="exact_match" data-value="0.7198795180722891"><title>Vision OCR text (no correction): 71.99%</title></rect>
+<text x="146" y="237.63" text-anchor="middle" font-size="15" font-weight="700">71.99%</text>
+<rect x="187" y="213.2731" width="58" height="191.7269" fill="#2563eb" data-dataset="vision" data-method="model" data-metric="exact_match" data-value="0.8714859437751004"><title>Vision T5: 87.15%</title></rect>
+<text x="216" y="204.27" text-anchor="middle" font-size="15" font-weight="700">87.15%</text>
+<text x="182" y="430" text-anchor="middle" font-size="16" font-weight="700">Vision</text>
+<rect x="319" y="187.8715" width="58" height="217.1285" fill="#c56a13" data-dataset="robota" data-method="baseline" data-metric="exact_match" data-value="0.9869477911646586"><title>Robota OCR text (no correction): 98.69%</title></rect>
+<text x="348" y="178.87" text-anchor="middle" font-size="15" font-weight="700">98.69%</text>
+<rect x="389" y="187.8715" width="58" height="217.1285" fill="#2563eb" data-dataset="robota" data-method="model" data-metric="exact_match" data-value="0.9869477911646586"><title>Robota T5: 98.69%</title></rect>
+<text x="418" y="178.87" text-anchor="middle" font-size="15" font-weight="700">98.69%</text>
+<text x="384" y="430" text-anchor="middle" font-size="16" font-weight="700">Robota</text>
+<text x="609" y="149" font-size="18" font-weight="700">Character error rate (%) · Lower is better</text>
+<line x1="635" y1="405" x2="1040" y2="405" stroke="#e2e8f0"/>
+<text x="623" y="410" text-anchor="end" font-size="13" fill="#526174">0</text>
+<line x1="635" y1="361" x2="1040" y2="361" stroke="#e2e8f0"/>
+<text x="623" y="366" text-anchor="end" font-size="13" fill="#526174">2</text>
+<line x1="635" y1="317" x2="1040" y2="317" stroke="#e2e8f0"/>
+<text x="623" y="322" text-anchor="end" font-size="13" fill="#526174">4</text>
+<line x1="635" y1="273" x2="1040" y2="273" stroke="#e2e8f0"/>
+<text x="623" y="278" text-anchor="end" font-size="13" fill="#526174">6</text>
+<line x1="635" y1="229" x2="1040" y2="229" stroke="#e2e8f0"/>
+<text x="623" y="234" text-anchor="end" font-size="13" fill="#526174">8</text>
+<line x1="635" y1="185" x2="1040" y2="185" stroke="#e2e8f0"/>
+<text x="623" y="190" text-anchor="end" font-size="13" fill="#526174">10</text>
+<rect x="672" y="224.8908" width="58" height="180.1092" fill="#c56a13" data-dataset="vision" data-method="baseline" data-metric="cer" data-value="0.0818677986658581"><title>Vision OCR text (no correction): 8.19%</title></rect>
+<text x="701" y="215.89" text-anchor="middle" font-size="15" font-weight="700">8.19%</text>
+<rect x="742" y="304.4946" width="58" height="100.5054" fill="#2563eb" data-dataset="vision" data-method="model" data-metric="cer" data-value="0.04568425308267637"><title>Vision T5: 4.57%</title></rect>
+<text x="771" y="295.49" text-anchor="middle" font-size="15" font-weight="700">4.57%</text>
+<text x="737" y="430" text-anchor="middle" font-size="16" font-weight="700">Vision</text>
+<rect x="874" y="400.3305" width="58" height="4.6695" fill="#c56a13" data-dataset="robota" data-method="baseline" data-metric="cer" data-value="0.002122498483929654"><title>Robota OCR text (no correction): 0.21%</title></rect>
+<text x="903" y="391.33" text-anchor="middle" font-size="15" font-weight="700">0.21%</text>
+<rect x="944" y="400.3305" width="58" height="4.6695" fill="#2563eb" data-dataset="robota" data-method="model" data-metric="cer" data-value="0.002122498483929654"><title>Robota T5: 0.21%</title></rect>
+<text x="973" y="391.33" text-anchor="middle" font-size="15" font-weight="700">0.21%</text>
+<text x="939" y="430" text-anchor="middle" font-size="16" font-weight="700">Robota</text>
+<line x1="36" y1="451" x2="1084" y2="451" stroke="#e2e8f0"/>
+<text x="36" y="478" font-size="16" font-weight="700">Vision: 156 errors fixed, 5 new errors.</text>
+<text x="36" y="501" font-size="15" fill="#526174">151 more correct names; 44.20% lower CER.</text>
+<text x="590" y="478" font-size="16" font-weight="700">Robota: no improvement.</text>
+<text x="590" y="501" font-size="15" fill="#526174">The model left all 996 names unchanged.</text>
+<text x="36" y="538" font-size="13" fill="#526174">Source: vision-test.json and robota-test.json · Models saved at epoch 9 (Vision) and epoch 2 (Robota)</text>
+</g>
+</svg>

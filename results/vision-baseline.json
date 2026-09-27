@@ -1,0 +1,30 @@
+{
+  "method": "Return the original OCR text unchanged; no model inference",
+  "dataset": "JaPOC",
+  "ocr_variant": "vision",
+  "source": "https://github.com/FastAccounting/ocr_correction_benchmark",
+  "computed_on": "2026-09-27",
+  "metrics_implementation": "app/metrics.py:compute_metrics",
+  "normalization": "None beyond the strings already in the dataset",
+  "units": "exact_match and cer are ratios, not percentages",
+  "validation": {
+    "path": "data/japoc/vision/val.json",
+    "samples": 498,
+    "exact_matches": 353,
+    "exact_match": 0.7088353413654619,
+    "cer": 0.08933545563072025,
+    "fixed": 0,
+    "damaged": 0,
+    "generation_failures": 0
+  },
+  "test": {
+    "path": "data/japoc/vision/test.json",
+    "samples": 996,
+    "exact_matches": 717,
+    "exact_match": 0.7198795180722891,
+    "cer": 0.0818677986658581,
+    "fixed": 0,
+    "damaged": 0,
+    "generation_failures": 0
+  }
+}
