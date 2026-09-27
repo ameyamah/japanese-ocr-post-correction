@@ -1,6 +1,8 @@
-from app.data import load_dataset
 from transformers import DataCollatorForSeq2Seq
-from app.model import load_model_and_tokenizer, tokenize_sample, predict
+
+from app.data import load_dataset
+from app.model import load_model_and_tokenizer, predict, tokenize_sample
+
 model, tokenizer = load_model_and_tokenizer(device = "cpu")
 print(model.config.model_type)
 print(model.device)

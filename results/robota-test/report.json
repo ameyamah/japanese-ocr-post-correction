@@ -1,0 +1,26 @@
+{
+  "config": {
+    "model": "runs/robota-gpu-10/model",
+    "data": "data/japoc/robota/test.json",
+    "output": "runs/robota-test",
+    "batch_size": 32,
+    "device": "cuda"
+  },
+  "baseline": {
+    "samples": 996,
+    "exact_match": 0.9869477911646586,
+    "cer": 0.002122498483929654,
+    "fixed": 0,
+    "damaged": 0,
+    "generation_failures": 0
+  },
+  "model": {
+    "samples": 996,
+    "exact_match": 0.9869477911646586,
+    "cer": 0.002122498483929654,
+    "fixed": 0,
+    "damaged": 0,
+    "generation_failures": 0
+  },
+  "seconds": 5.670029148022877
+}

@@ -1,8 +1,8 @@
 """Generate corrections in batches and compare them with unchanged OCR text."""
 import argparse
 import json
-from pathlib import Path
 import time
+from pathlib import Path
 
 from torch.utils.data import DataLoader
 
