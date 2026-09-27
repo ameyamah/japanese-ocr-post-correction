@@ -1,4 +1,4 @@
-"""Fine-tune Japanese T5 using minibatches."""
+"""Fine-tune T5"""
 import argparse
 import json
 from pathlib import Path
@@ -7,141 +7,113 @@ import torch
 from torch.utils.data import DataLoader
 from transformers import DataCollatorForSeq2Seq
 
-from app.artifacts import write_json
-from app.data import summarize_dataset, download_dataset, load_dataset
+from app.data import load_dataset
 from app.evaluate import evaluate
-from app.model import DEFAULT_MODEL_NAME, tokenize_sample, load_model_and_tokenizer
+from app.model import DEFAULT_MODEL_NAME, load_model_and_tokenizer, tokenize_sample
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--train")
-    parser.add_argument("--val")
-    parser.add_argument("--fetch", action="store_true", help="Download/reuse official train and val if paths omitted")
-    parser.add_argument("--ocr", choices=("vision", "robota"), default="vision")
-    parser.add_argument("--data-root", default="data/japoc")
-    parser.add_argument("--output", required=True)
-    parser.add_argument("--base-model", default=DEFAULT_MODEL_NAME)
+    parser.add_argument("--train", required=True, help="Train Dataset Path")
+    parser.add_argument("--val", required=True, help="Val Dataset Path")
+    parser.add_argument("--output", required=True, help="Output Directory Path")
+    parser.add_argument("--base-model", default=DEFAULT_MODEL_NAME, help="Base model name (HuggingFace)")
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
-    parser.add_argument("--steps", type=int, default=200, help="Optimizer updates, not microbatches")
-    parser.add_argument("--batch-size", type=int, default=1)
-    parser.add_argument("--accumulation", type=int, default=1)
+    parser.add_argument("--epochs", type=int, default=100)
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--eval-batch-size", type=int, default=32)
     parser.add_argument("--learning-rate", type=float, default=5e-5)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--eval-every", type=int, default=100)
-    parser.add_argument("--limit-train", type=int)
-    parser.add_argument("--limit-val", type=int)
-    parser.add_argument("--precision", choices=("fp32", "bf16"), default="fp32")
-    parser.add_argument("--gradient-checkpointing", action="store_true")
     args = parser.parse_args()
-    for key in ("steps", "batch_size", "accumulation", "eval_every", "limit_train", "limit_val"):
-        value = getattr(args, key)
-        if value is not None and value < 1:
-            parser.error(f"{key} must be positive")
-    if not 0 < args.learning_rate < 1:
-        parser.error("Choose 0 < learning rate < 1")
-    if bool(args.train) != bool(args.val) or (args.fetch and args.train):
-        parser.error("Supply both --train/--val, or --fetch without those paths")
-    if not args.train and not args.fetch:
-        parser.error("Supply --train and --val, or explicitly use --fetch")
+    # Catch only settings that would prevent meaningful training.
+    counts = [args.epochs, args.batch_size, args.eval_batch_size]
+    if min(counts) < 1 or not 0 < args.learning_rate < 1:
+        parser.error("Counts must be positive; learning rate must be between 0 and 1")
     return args
 
 
-def prepare_data(args, tokenizer):
-    training, validation = load_dataset(args.train), load_dataset(args.val)
-    if {r["id"] for r in training} & {r["id"] for r in validation}:
-        raise ValueError("Training and validation IDs overlap")
-    training, validation = training[:args.limit_train], validation[:args.limit_val]
-    features, accepted, excluded = [], [], []
-    for row in training:
-        try:
-            features.append(tokenize_sample(tokenizer, row))
-            accepted.append(row)
-        except ValueError as error:
-            excluded.append({"id": row["id"], "reason": str(error)})
-    if not accepted:
-        raise ValueError("No trainable rows after blank/length checks")
-    return features, accepted, validation, excluded, summarize_dataset(training)
+def train(args):
+    torch.manual_seed(648)
+    output_dir = Path(args.output)
+    output_dir.mkdir(parents=True, exist_ok=False)
 
-
-def iterate_batches(loader):
-    while True:
-        yield from loader
-
-
-def train(args: argparse.Namespace, output: Path) -> dict:
-    torch.manual_seed(args.seed)
-    torch.set_num_threads(2)
+    print("Loading model and tokenizer...", flush=True)
     model, tokenizer = load_model_and_tokenizer(args.base_model, args.device)
-    if args.precision == "bf16" and (model.device.type != "cuda" or not torch.cuda.is_bf16_supported()):
-        raise ValueError("bf16 requires a CUDA device with bf16 support; use fp32 otherwise")
-    if args.gradient_checkpointing:
+    if model.device.type == "cuda":
+        # Recompute some activations during backward to save GPU memory.
         model.gradient_checkpointing_enable()
-        model.config.use_cache = False
-    features, training, validation, excluded, original_audit = prepare_data(args, tokenizer)
-    write_json(output / "excluded-training.json", excluded)
-    write_json(output / "training-rows.json", training)
+
+    train_samples = load_dataset(args.train)
+    val_samples = load_dataset(args.val)
+    if {sample["id"] for sample in train_samples} & {sample["id"] for sample in val_samples}:
+        raise ValueError("Training and validation IDs overlap; use separate splits")
+
+    features = [tokenize_sample(tokenizer, sample) for sample in train_samples]
+    # Different-length sequences need padding before they can form a tensor.
+    # -100 tells the loss function to ignore padded target positions.
     collator = DataCollatorForSeq2Seq(tokenizer, model=model, label_pad_token_id=-100)
-    generator = torch.Generator().manual_seed(args.seed)
-    loader = DataLoader(features, batch_size=args.batch_size, shuffle=True,
-                        generator=generator, collate_fn=collator)
-    batches = iterate_batches(loader)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=0.0)
+    train_dataloader = DataLoader(
+        features, batch_size=args.batch_size, shuffle=True, collate_fn=collator
+    )
+    batches_per_epoch = len(train_dataloader)
 
-    report = {
-        "config": vars(args),
-        "training_audit": original_audit, "training_rows_used": len(training),
-        "validation_audit": summarize_dataset(validation, training),
-        "excluded_training_rows": len(excluded),
-        "losses": [], "validation_history": [],
-    }
-    best_rank = None
-    for step in range(1, args.steps + 1):
-        window = [next(batches) for _ in range(args.accumulation)]
-        token_count = sum(int((batch["labels"] != -100).sum()) for batch in window)
-        model.train()
-        optimizer.zero_grad(set_to_none=True)
-        update_loss = 0.0
-        for cpu_batch in window:
-            weight = int((cpu_batch["labels"] != -100).sum()) / token_count
-            batch = {key: value.to(model.device) for key, value in cpu_batch.items()}
-            with torch.autocast(device_type=model.device.type, dtype=torch.bfloat16, enabled=args.precision == "bf16"):
-                loss = model(**batch).loss
+    optimizer = torch.optim.AdamW(
+        model.parameters(), lr=args.learning_rate, weight_decay=0.0, foreach=False
+    )
+    history = []
+    best_exact_match = -1.0
+    report = {"config": vars(args), "seed": 42, "history": history}
+    print(f"Training on {model.device}: {batches_per_epoch} batches per epoch", flush=True)
+
+    for epoch in range(1, args.epochs + 1):
+        model.train()  # Evaluation changes the mode; restore it each epoch.
+        total_loss = 0.0
+        total_tokens = 0
+        for batch_number, batch in enumerate(train_dataloader, start=1):
+            batch = {name: tensor.to(model.device) for name, tensor in batch.items()}
+            optimizer.zero_grad(set_to_none=True)
+            loss = model(**batch, use_cache=False).loss
             if not torch.isfinite(loss):
-                raise ValueError("Nonfinite training loss")
-            (loss * weight).backward()
-            update_loss += loss.item() * weight
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0, error_if_nonfinite=True)
-        optimizer.step()
-        report["losses"].append(update_loss)
-        print(f"update {step}/{args.steps}: loss={update_loss:.4f}", flush=True)
-        if step % args.eval_every == 0 or step == args.steps:
-            result, predictions = evaluate(model, tokenizer, validation, {r["tgt"] for r in training})
-            metrics = result["candidate"]
-            report["validation_history"].append({"step": step, **metrics})
-            rank = (metrics["exact_match"], -metrics["damaged"], -metrics["failures"])
-            if best_rank is None or rank > best_rank:
-                best_rank = rank
-                model.save_pretrained(output / "model", safe_serialization=True)
-                tokenizer.save_pretrained(output / "model")
-                write_json(output / "predictions.json", predictions, replace=True)
-                report.update(result)
-                report["best_step"] = step
-    write_json(output / "report.json", report)
-    return report
+                raise ValueError("Training loss is infinite. Stop rather than save bad weights")
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0, error_if_nonfinite=True)
+            optimizer.step()  # One batch means one parameter update in this project.
 
+            # Weight the displayed epoch loss by non-padding target tokens.
+            tokens = (batch["labels"] != -100).sum().item()
+            total_loss += loss.item() * tokens
+            total_tokens += tokens
+            print(
+                f"epoch {epoch}/{args.epochs}, batch {batch_number}/{batches_per_epoch}, "
+                f"loss={loss.item():.4f}", flush=True
+            )
+        # Release the last training batch/gradients before generation.
+        optimizer.zero_grad(set_to_none=True)
+        del batch, loss
 
-def main() -> None:
-    args = parse_args()
-    output = Path(args.output)
-    output.mkdir(parents=True, exist_ok=False)
-    if args.fetch:
-        paths = download_dataset(args.data_root, args.ocr)
-        args.train, args.val = str(paths["train"]), str(paths["val"])
-    report = train(args, output)
-    print(json.dumps({"best_step": report["best_step"],
-                      "candidate": report["candidate"]}, indent=2))
+        metrics, predictions = evaluate(model, tokenizer, val_samples, args.eval_batch_size)
+        history.append({
+            "epoch": epoch, "train_loss": total_loss / total_tokens,
+            "train_batches": batches_per_epoch, **metrics["model"],
+        })
+        print(f"Validation exact match: {metrics['model']['exact_match']:.3f}", flush=True)
+
+        # Validation chooses the checkpoint. The test split is never used here.
+        if metrics["model"]["exact_match"] > best_exact_match:
+            best_exact_match = metrics["model"]["exact_match"]
+            model.save_pretrained(output_dir / "model")
+            tokenizer.save_pretrained(output_dir / "model")
+            (output_dir / "predictions.json").write_text(
+                json.dumps(predictions, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            report.update({"best_epoch": epoch, **metrics})
+            print(f"Saved selected checkpoint from epoch {epoch}", flush=True)
+
+    # This file is written only after all requested epochs finish.
+    (output_dir / "report.json").write_text(
+        json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print(f"Finished. Best epoch: {report['best_epoch']}. Results: {output_dir}", flush=True)
 
 
 if __name__ == "__main__":
-    main()
+    train(parse_args())

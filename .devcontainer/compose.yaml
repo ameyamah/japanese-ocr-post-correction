@@ -6,13 +6,13 @@ services:
     command: sleep infinity
     init: true
     volumes:
-      - ..:/workspaces/ocr-text-corrector
+      - ..:/workspaces/japanese-ocr-post-correction
     environment:
       MLFLOW_TRACKING_URI: http://mlflow:5000
-      UV_CACHE_DIR: /workspaces/ocr-text-corrector/.cache/uv
-      HF_HOME: /workspaces/ocr-text-corrector/.cache/huggingface
+      UV_CACHE_DIR: /workspaces/japanese-ocr-post-correction/.cache/uv
+      HF_HOME: /workspaces/japanese-ocr-post-correction/.cache/huggingface
       HF_HUB_DISABLE_XET: "1"
-      TMPDIR: /workspaces/ocr-text-corrector/.cache/tmp
+      TMPDIR: /workspaces/japanese-ocr-post-correction/.cache/tmp
     depends_on:
       mlflow:
         condition: service_healthy

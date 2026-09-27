@@ -1,70 +1,66 @@
-"""Evaluate a saved checkpoint."""
+"""Generate corrections in batches and compare them with unchanged OCR text."""
 import argparse
+import json
 from pathlib import Path
 import time
 
-import torch
+from torch.utils.data import DataLoader
 
-from app.artifacts import write_json
 from app.data import load_dataset
 from app.metrics import compute_metrics
-from app.model import load_model_and_tokenizer, predict
+from app.model import load_model_and_tokenizer, predict_batch
 
 
-
-def evaluate(model, tokenizer, rows, training_targets=None):
-    records = []
-    if model.device.type == "cuda":
-        torch.cuda.synchronize()
+def evaluate(model, tokenizer, samples, batch_size=16):
+    dataloader = DataLoader(
+        [sample["src"] for sample in samples], batch_size=batch_size, shuffle=False
+    )
+    predictions = []
     start = time.perf_counter()
-    for row in rows:
-        try:
-            prediction, error = predict(model, tokenizer, row["src"]), None
-        except ValueError as exception:
-            prediction, error = None, str(exception)
-        records.append({"id": row["id"], "src": row["src"], "tgt": row["tgt"],
-                        "prediction": prediction, "error": error})
-    if model.device.type == "cuda":
-        torch.cuda.synchronize()
-    elapsed = time.perf_counter() - start
-    predictions = [r["prediction"] for r in records]
-    baseline = compute_metrics(rows, [r["src"] for r in rows])
-    candidate = compute_metrics(rows, predictions)
-    report = {
-        "baseline": baseline, "candidate": candidate,
-        "seconds": elapsed, "seconds_per_row": elapsed / len(rows),
+    print(f"Evaluating {len(samples)} samples in {len(dataloader)} batches...", flush=True)
+    for batch_number, texts in enumerate(dataloader, start=1):
+        predictions.extend(predict_batch(model, tokenizer, texts))
+        print(
+            f"eval batch {batch_number}/{len(dataloader)} "
+            f"({len(predictions)} samples, {time.perf_counter() - start:.1f}s)",
+            flush=True,
+        )
+
+    metrics = {
+        "baseline": compute_metrics(samples, [sample["src"] for sample in samples]),
+        "model": compute_metrics(samples, predictions),
+        "seconds": time.perf_counter() - start,
     }
-    if training_targets is not None:
-        report["groups"] = {}
-        for name, seen in (("seen", True), ("unseen", False)):
-            indices = [i for i, row in enumerate(rows) if (row["tgt"] in training_targets) == seen]
-            report["groups"][name] = compute_metrics([rows[i] for i in indices], [predictions[i] for i in indices]) if indices else None
-    return report, records
+    rows = [
+        {"id": sample["id"], "src": sample["src"], "tgt": sample["tgt"], "prediction": prediction}
+        for sample, prediction in zip(samples, predictions)
+    ]
+    return metrics, rows
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", required=True)
+    parser.add_argument("--model", required=True, help="Path to a saved model directory")
     parser.add_argument("--data", required=True)
     parser.add_argument("--output", required=True)
-    parser.add_argument("--training-data", help="Optional training JSON for seen/unseen-name analysis")
+    parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
     args = parser.parse_args()
-    if not Path(args.model).is_dir():
-        raise ValueError("Evaluate a saved local checkpoint")
-    rows = load_dataset(args.data)
-    training = load_dataset(args.training_data) if args.training_data else []
-    if {r["id"] for r in rows} & {r["id"] for r in training}:
-        raise ValueError("Evaluation and training IDs overlap")
-    output = Path(args.output)
-    output.mkdir(parents=True, exist_ok=False)
+
+    output_dir = Path(args.output)
+    output_dir.mkdir(parents=True, exist_ok=False)  # Do not overwrite another experiment.
+    samples = load_dataset(args.data)
     model, tokenizer = load_model_and_tokenizer(args.model, args.device)
-    targets = {r["tgt"] for r in training} if training else None
-    report, predictions = evaluate(model, tokenizer, rows, targets)
-    report["config"] = vars(args)
-    write_json(output / "report.json", report)
-    write_json(output / "predictions.json", predictions)
-    print(report)
+    metrics, predictions = evaluate(model, tokenizer, samples, args.batch_size)
+    report = {"config": vars(args), **metrics}
+    (output_dir / "report.json").write_text(
+        json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    (output_dir / "predictions.json").write_text(
+        json.dumps(predictions, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print(json.dumps(metrics, indent=2))
+
 
 if __name__ == "__main__":
     main()

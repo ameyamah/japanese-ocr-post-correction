@@ -1,9 +1,9 @@
 {
-  "name": "OCR Text Corrector (CPU)",
+  "name": "japanese-ocr-post-correction",
   "dockerComposeFile": "compose.yaml",
   "service": "dev",
   "runServices": ["dev", "mlflow"],
-  "workspaceFolder": "/workspaces/ocr-text-corrector",
+  "workspaceFolder": "/workspaces/japanese-ocr-post-correction",
   "shutdownAction": "stopCompose",
   "remoteUser": "vscode",
   "overrideCommand": false,
@@ -17,7 +17,7 @@
     "vscode": {
       "extensions": ["ms-python.python", "ms-python.vscode-pylance", "charliermarsh.ruff"],
       "settings": {
-        "python.defaultInterpreterPath": "/workspaces/ocr-text-corrector/.venv/bin/python",
+        "python.defaultInterpreterPath": "/workspaces/japanese-ocr-post-correction/.venv/bin/python",
         "python.terminal.activateEnvironment": true
       }
     }
