@@ -32,7 +32,7 @@ def parse_args():
 
 
 def train(args):
-    torch.manual_seed(648)
+    torch.manual_seed(42)
     output_dir = Path(args.output)
     output_dir.mkdir(parents=True, exist_ok=False)
 
