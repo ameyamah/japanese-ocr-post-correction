@@ -23,7 +23,6 @@ def tokenize_sample(tokenizer, sample):
     inputs = tokenizer(sample["src"], max_length=MAX_LENGTH, truncation=True)
     targets = tokenizer(text_target=sample["tgt"], max_length=MAX_LENGTH, truncation=True) #ground truths
     inputs["labels"] = targets["input_ids"]
-    # Padding happens later, when the DataLoader forms a batch.
     return inputs
 
 
@@ -34,7 +33,6 @@ def predict_batch(model, tokenizer, texts):
     inputs = tokenizer(
         texts, padding=True, truncation=True, max_length=MAX_LENGTH, return_tensors="pt"
     )
-    # print(inputs)
     inputs = {name: tensor.to(model.device) for name, tensor in inputs.items()}
     generated_ids = model.generate(
         **inputs, max_new_tokens=MAX_LENGTH, num_beams=1, do_sample=False, use_cache=True
@@ -49,7 +47,7 @@ def predict_batch(model, tokenizer, texts):
 
 def predict(model, tokenizer, text):
     # The HTTP API uses the same generation code as evaluation.
-    prediction = predict_batch(model, tokenizer, [text])[0]
+    prediction = predict_batch(model, tokenizer, [text])[0] #Batch contains 1 string -> output is 1st
     if prediction is None or not prediction.strip():
         raise ValueError("The model did not produce a complete, nonblank correction")
     return prediction

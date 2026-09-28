@@ -65,7 +65,7 @@ def train(args):
     print(f"Training on {model.device}: {batches_per_epoch} batches per epoch", flush=True)
 
     for epoch in range(1, args.epochs + 1):
-        model.train()  # Evaluation changes the mode; restore it each epoch.
+        model.train()  # Evaluation changes the mode. restore it each epoch.
         total_loss = 0.0
         total_tokens = 0
         for batch_number, batch in enumerate(train_dataloader, start=1):
@@ -76,9 +76,8 @@ def train(args):
                 raise ValueError("Training loss is infinite. Stop rather than save bad weights")
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0, error_if_nonfinite=True)
-            optimizer.step()  # One batch means one parameter update in this project.
+            optimizer.step()
 
-            # Weight the displayed epoch loss by non-padding target tokens.
             tokens = (batch["labels"] != -100).sum().item()
             total_loss += loss.item() * tokens
             total_tokens += tokens
@@ -97,7 +96,6 @@ def train(args):
         })
         print(f"Validation exact match: {metrics['model']['exact_match']:.3f}", flush=True)
 
-        # Validation chooses the checkpoint. The test split is never used here.
         if metrics["model"]["exact_match"] > best_exact_match:
             best_exact_match = metrics["model"]["exact_match"]
             model.save_pretrained(output_dir / "model")
@@ -108,7 +106,7 @@ def train(args):
             report.update({"best_epoch": epoch, **metrics})
             print(f"Saved selected checkpoint from epoch {epoch}", flush=True)
 
-    # This file is written only after all requested epochs finish.
+    # Write report after training finishes.
     (output_dir / "report.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
     )

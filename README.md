@@ -69,12 +69,6 @@ If you need to perform additional troubleshooting, the repo also includes the de
 
 The Vision and Robota training, validation, and test datasets are available under the `data` folder.
 
-In case you want to re-download the datasets:
-
-```bash
-uv run --no-sync python scripts/download_data.py --ocr vision
-```
-
 The following are the train settings I used for both models. To train on Vision:
 
 ```bash
@@ -90,7 +84,7 @@ uv run --no-sync python -u -m app.train \
   --device cuda
 ```
 
-The training loop uses AdamW and a random seed of 42. Each epoch goes through all training samples, followed by evaluation on the validation data. The model with the highest validation exact match and its tokenizer are saved in `runs/vision/model`. The run folder also contains `report.json` with the metrics and `predictions.json` with the best model's validation predictions.
+The training loop uses AdamW and a random seed of 648. Each epoch goes through all training samples, followed by evaluation on the validation data. The model with the highest validation exact match and its tokenizer are saved in `runs/vision/model`. The run folder also contains `report.json` with the metrics and `predictions.json` with the best model's validation predictions.
 
 Use a new output folder for each run. If your GPU runs out of memory, lower the batch size. This may change the results. To train on CPU, use `--device cpu`, though it will be much slower.
 

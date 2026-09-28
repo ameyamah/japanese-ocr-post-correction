@@ -17,7 +17,6 @@ def compute_metrics(samples, predictions):
         correct += is_correct
         fixed += not was_correct and is_correct
         damaged += was_correct and not is_correct
-        # Failed generations count as empty text for CER, and never exact matches.
         character_errors += Levenshtein.distance(prediction or "", sample["tgt"])
         reference_characters += len(sample["tgt"])
 

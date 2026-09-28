@@ -28,7 +28,7 @@ async def lifespan(app):
     if not directory.is_dir():
         raise ValueError("MODEL_DIR must be a saved local checkpoint")
     app.state.model, app.state.tokenizer = load_model_and_tokenizer(str(directory), os.environ.get("MODEL_DEVICE", "cpu"))
-    # Load once at startup, not once per HTTP request.
+    # Load once during startup.
     app.state.inference_lock = threading.Lock()
     yield
 
@@ -43,11 +43,9 @@ def health():
 
 @app.post("/correct")
 def correct_text(request: CorrectionRequest):
-    # Reject overlong demo inputs rather than silently truncating a company name.
     token_ids = app.state.tokenizer(request.text)["input_ids"]
     if len(token_ids) > MAX_LENGTH:
         raise HTTPException(status_code=422, detail="Input exceeds 64 tokens")
-    # Reject concurrent work instead of building an unbounded GPU/CPU queue.
     if not app.state.inference_lock.acquire(blocking=False):
         raise HTTPException(status_code=503, detail="Model busy; try again", headers={"Retry-After": "1"})
     try:

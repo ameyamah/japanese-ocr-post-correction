@@ -3,7 +3,7 @@ FROM python:3.12-slim-bookworm
 COPY --from=uv /uv /uvx /usr/local/bin/
 WORKDIR /service
 ENV UV_PROJECT_ENVIRONMENT=/opt/venv
-COPY pyproject.toml uv.lock README.md LICENSE THIRD_PARTY.md ./
+COPY pyproject.toml uv.lock README.md LICENSE ./
 RUN uv sync --locked --no-install-project --extra cpu
 COPY app ./app
 RUN useradd --create-home --uid 10001 demo
